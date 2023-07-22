@@ -167,8 +167,21 @@ def run():
         
         # Output the prediction
         predicted_group = np.argmax(prediction[0])+1
-        st.subheader(f"The predicted class is: {predicted_group}")
+
+        group_names = {
+            1: 'Normal or no Thalassemia present',
+            2: 'Alpha Thalassemia minor (milder form)',
+            3: 'Hbh disease (requires regular blood transfusion)',
+            4: 'Alpha Thalassemia major (Life threatening)',
+        }
+
+        st.subheader(f"The predicted class is: {group_names[predicted_group]}")
 
 run()
+
+
+
+
+
 
 
