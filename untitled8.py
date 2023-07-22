@@ -145,7 +145,7 @@ def run():
     data = user_input_features()
     data_df = pd.DataFrame(data, index=[0])
 
-    st.subheader('By Lakshmikanth Katabathula MSBA, University of cincinnati')
+    st.subheader('By using Neuralnetwork')
     st.subheader('Patient biomarkers')
     st.write(data_df)
     
