@@ -118,7 +118,7 @@ def train_model(csv_file):
     model.add(Dense(16, activation='relu'))
 
     # Add an output layer with one neuron and a 'softmax' activation function 
-    model.add(Dense(5, activation='softmax'))
+    model.add(Dense(4, activation='softmax'))  # Changed to 4 to match the number of classes
 
     # Compile the model
     model.compile(loss='sparse_categorical_crossentropy',
@@ -154,7 +154,7 @@ def run():
     data = user_input_features()
     data_df = pd.DataFrame(data, index=[0])
 
-    st.subheader('By Lakshmikanth Katabathula MSBA, University of cincinnati')
+    st.subheader('By Lakshmikanth Katabathula MSBA, University of Cincinnati')
     st.subheader('Patient biomarkers')
     st.write(data_df)
     
@@ -169,14 +169,6 @@ def run():
         predicted_group = np.argmax(prediction[0])+1
         st.subheader(f"The predicted class is: {predicted_group}")
 
-        # Output class probabilities
-        prediction_df = pd.DataFrame({
-            'Group': [1, 2, 3, 4],
-            'Confidence': prediction[0][:4]
-        })
-        prediction_df.sort_values('Confidence', ascending=False, inplace=True)
-        st.subheader('Confidence in prediction for each group:')
-        st.table(prediction_df.style.format({'Confidence': '{:,.2%}'}))
-
 run()
+
 
