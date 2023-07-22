@@ -130,7 +130,7 @@ streamlit==1.15.0
 sweetviz==2.1.4
 tenacity==8.2.2
 terminado==0.17.1
-tensorflow==2.12
+tensorflow
 threadpoolctl==3.1.0
 tinycss2==1.2.1
 toml==0.10.2
