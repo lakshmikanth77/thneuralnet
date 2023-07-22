@@ -158,24 +158,25 @@ def run():
     st.subheader('Patient biomarkers')
     st.write(data_df)
     
-    if st.button('Predict Group'):
-    model, scaler = train_model('https://raw.githubusercontent.com/lakshmikanth77/thalafinalapp/main/thdata_final2.csv')
-    # Scale the user data
-    user_scaled = scaler.transform(data_df)
-    # Make prediction
-    prediction = model.predict_classes(user_scaled)
-    
-    # Output the prediction
-    predicted_group = prediction[0]+1
+        if st.button('Predict Group'):
+        model, scaler = train_model('https://raw.githubusercontent.com/lakshmikanth77/thalafinalapp/main/thdata_final2.csv')
+        # Scale the user data
+        user_scaled = scaler.transform(data_df)
+        # Make prediction
+        prediction = model.predict_classes(user_scaled)
+        
+        # Output the prediction
+        predicted_group = prediction[0]+1
 
-    group_names = {
-        1: 'Normal or no Thalassemia present',
-        2: 'Alpha Thalassemia minor (milder form)',
-        3: 'Hbh disease (requires regular blood transfusion)',
-        4: 'Alpha Thalassemia major (Life threatening)',
-    }
+        group_names = {
+            1: 'Normal or no Thalassemia present',
+            2: 'Alpha Thalassemia minor (milder form)',
+            3: 'Hbh disease (requires regular blood transfusion)',
+            4: 'Alpha Thalassemia major (Life threatening)',
+        }
 
-    st.subheader(f"The predicted class is: {group_names[predicted_group]}")
+        st.subheader(f"The predicted class is: {group_names[predicted_group]}")
+
 
 
 run()
