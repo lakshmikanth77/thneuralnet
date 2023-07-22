@@ -86,6 +86,7 @@ Original file is located at
 
 import streamlit as st
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.models import Sequential
@@ -153,10 +154,8 @@ def run():
         # Scale the user data
         user_scaled = scaler.transform(data_df)
         # Make prediction
-        prediction = model.predict_classes(user_scaled)
-        
-        # Output the prediction
-        predicted_group = prediction[0] + 1  # Adjust back to original class labels
+        prediction = model.predict(user_scaled)
+        predicted_group = np.argmax(prediction) + 1  # Adjust back to original class labels
 
         group_names = {
             1: 'Normal or no Thalassemia present',
@@ -168,6 +167,7 @@ def run():
         st.subheader(f"The predicted class is: {group_names[predicted_group]}")
 
 run()
+
 
 
 
