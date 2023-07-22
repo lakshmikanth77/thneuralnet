@@ -83,35 +83,39 @@ Original file is located at
 
 #     # Output the prediction
 #     st.subheader(f"The predicted class is: {np.argmax(prediction)+1}")
+
+import streamlit as st
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
-import streamlit as st
 
-# Train the model
 def train_model(url):
     data = pd.read_csv(url)
 
     X = data[['Age', 'Hb', 'MCH', 'MCHC', 'RDW', 'RBC count']]
-    y = data['Group']
+    y = data['Group'] - 1  # Adjust group labels to start from 0
 
-    X_train, _, y_train, _ = train_test_split(X, y, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
     scaler = StandardScaler().fit(X_train)
     X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
 
     model = Sequential()
     model.add(Dense(32, activation='relu', input_shape=(X_train.shape[1],)))
     model.add(Dense(16, activation='relu'))
-    model.add(Dense(4, activation='softmax'))  # Changed to 4 to match the number of classes
+    model.add(Dense(4, activation='softmax'))  # 4 classes
 
     model.compile(loss='sparse_categorical_crossentropy',
                   optimizer='adam', 
                   metrics=['accuracy'])
     
     model.fit(X_train, y_train,epochs=20, batch_size=32, verbose=1)
+    
+    test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=0)
+    print(f"Test accuracy: {test_accuracy}")
 
     return model, scaler
 
@@ -140,7 +144,7 @@ def run():
     data = user_input_features()
     data_df = pd.DataFrame(data, index=[0])
 
-    st.subheader('By Lakshmikanth Katabathula MSBA, University of Cincinnati')
+    st.subheader('By Lakshmikanth Katabathula MSBA, University of cincinnati')
     st.subheader('Patient biomarkers')
     st.write(data_df)
     
@@ -152,7 +156,7 @@ def run():
         prediction = model.predict_classes(user_scaled)
         
         # Output the prediction
-        predicted_group = prediction[0]+1
+        predicted_group = prediction[0] + 1  # Adjust back to original class labels
 
         group_names = {
             1: 'Normal or no Thalassemia present',
@@ -164,6 +168,7 @@ def run():
         st.subheader(f"The predicted class is: {group_names[predicted_group]}")
 
 run()
+
 
 
 
