@@ -83,52 +83,38 @@ Original file is located at
 
 #     # Output the prediction
 #     st.subheader(f"The predicted class is: {np.argmax(prediction)+1}")
-
-import streamlit as st
-from keras.models import Sequential
-from keras.layers import Dense
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
 import pandas as pd
-import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+import streamlit as st
 
-def train_model(csv_file):
-    # Load the data
-    data = pd.read_csv(csv_file)
+# Train the model
+def train_model(url):
+    data = pd.read_csv(url)
 
-    # Separate features (X) and target variable (y)
     X = data[['Age', 'Hb', 'MCH', 'MCHC', 'RDW', 'RBC count']]
     y = data['Group']
 
-    # Split the data into training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    X_train, _, y_train, _ = train_test_split(X, y, test_size=0.3, random_state=42)
 
-    # Standardize the features to have mean=0 and variance=1
     scaler = StandardScaler().fit(X_train)
     X_train = scaler.transform(X_train)
-    X_test = scaler.transform(X_test)
 
-    # Initialize the constructor
     model = Sequential()
-
-    # Add an input layer 
     model.add(Dense(32, activation='relu', input_shape=(X_train.shape[1],)))
-
-    # Add one hidden layer 
     model.add(Dense(16, activation='relu'))
-
-    # Add an output layer with one neuron and a 'softmax' activation function 
     model.add(Dense(4, activation='softmax'))  # Changed to 4 to match the number of classes
 
-    # Compile the model
     model.compile(loss='sparse_categorical_crossentropy',
-                optimizer='adam', 
-                metrics=['accuracy'])
-
-    # Train the model
+                  optimizer='adam', 
+                  metrics=['accuracy'])
+    
     model.fit(X_train, y_train,epochs=20, batch_size=32, verbose=1)
 
     return model, scaler
+
 
 def run():
     st.title("Thalassemia Patients disease class Prediction App")
@@ -158,7 +144,7 @@ def run():
     st.subheader('Patient biomarkers')
     st.write(data_df)
     
-        if st.button('Predict Group'):
+    if st.button('Predict Group'):
         model, scaler = train_model('https://raw.githubusercontent.com/lakshmikanth77/thalafinalapp/main/thdata_final2.csv')
         # Scale the user data
         user_scaled = scaler.transform(data_df)
@@ -177,9 +163,14 @@ def run():
 
         st.subheader(f"The predicted class is: {group_names[predicted_group]}")
 
-
-
 run()
+
+
+
+
+    
+
+   
 
 
 
