@@ -118,7 +118,7 @@ def train_model(csv_file):
     model.add(Dense(16, activation='relu'))
 
     # Add an output layer with one neuron and a 'softmax' activation function 
-    model.add(Dense(4, activation='softmax'))  # Changed to 4 to match the number of classes
+    model.add(Dense(5, activation='softmax'))  # Changed to 4 to match the number of classes
 
     # Compile the model
     model.compile(loss='sparse_categorical_crossentropy',
