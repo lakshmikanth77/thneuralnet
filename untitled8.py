@@ -7,14 +7,82 @@ Original file is located at
     https://colab.research.google.com/drive/1eVYQq1wlxMR5M620ehVnFWirKD4t9fcO
 """
 
-import pandas as pd
-import tensorflow as tf
-import keras
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.models import load_model
+# import pandas as pd
+# import tensorflow as tf
+# import keras
+# from sklearn.model_selection import train_test_split
+# from sklearn.preprocessing import StandardScaler
+# from tensorflow.keras.models import Sequential
+# from tensorflow.keras.layers import Dense
+# from tensorflow.keras.models import load_model
+
+# import streamlit as st
+# from keras.models import Sequential
+# from keras.layers import Dense
+# from sklearn.preprocessing import StandardScaler
+# from sklearn.model_selection import train_test_split
+# import pandas as pd
+# import numpy as np
+
+# st.title("Thalassemia Classifier")
+
+
+# data = pd.read_csv("https://raw.githubusercontent.com/lakshmikanth77/thalafinalapp/main/thdata_final2.csv")
+
+
+# # Separate features (X) and target variable (y)
+# X = data[['Age', 'Hb', 'MCH', 'MCHC', 'RDW', 'RBC count']]
+# y = data['Group']
+
+# # Split the data into training and test sets
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# # Standardize the features to have mean=0 and variance=1
+# scaler = StandardScaler().fit(X_train)
+# X_train = scaler.transform(X_train)
+# X_test = scaler.transform(X_test)
+
+# # Initialize the constructor
+# model = Sequential()
+
+# # Add an input layer
+# model.add(Dense(32, activation='relu', input_shape=(X_train.shape[1],)))
+
+# # Add one hidden layer
+# model.add(Dense(16, activation='relu'))
+
+# # Add an output layer with one neuron and a 'softmax' activation function
+# model.add(Dense(5, activation='softmax'))
+
+# # Compile the model
+# model.compile(loss='sparse_categorical_crossentropy',
+#               optimizer='adam',
+#               metrics=['accuracy'])
+
+# # Train the model
+# model.fit(X_train, y_train,epochs=20, batch_size=32, verbose=1)
+
+# # Get user input
+# Age = st.number_input('Age', 0)
+# Hb = st.number_input('Hb', 0.0)
+# MCH = st.number_input('MCH', 0.0)
+# MCHC = st.number_input('MCHC', 0.0)
+# RDW = st.number_input('RDW', 0.0)
+# RBC_count = st.number_input('RBC count', 0.0)
+
+# # On button press
+# if st.button("Classify"):
+#     # Create a numpy array in the correct shape
+#     user_data = np.array([[Age, Hb, MCH, MCHC, RDW, RBC_count]])
+
+#     # Scale the user data
+#     user_scaled = scaler.transform(user_data)
+
+#     # Make prediction
+#     prediction = model.predict(user_scaled)
+
+#     # Output the prediction
+#     st.subheader(f"The predicted class is: {np.argmax(prediction)+1}")
 
 import streamlit as st
 from keras.models import Sequential
@@ -24,66 +92,91 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
 
-st.title("Thalassemia Classifier")
+def train_model(csv_file):
+    # Load the data
+    data = pd.read_csv(csv_file)
 
+    # Separate features (X) and target variable (y)
+    X = data[['Age', 'Hb', 'MCH', 'MCHC', 'RDW', 'RBC count']]
+    y = data['Group']
 
-data = pd.read_csv("https://raw.githubusercontent.com/lakshmikanth77/thalafinalapp/main/thdata_final2.csv")
+    # Split the data into training and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
+    # Standardize the features to have mean=0 and variance=1
+    scaler = StandardScaler().fit(X_train)
+    X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
 
-# Separate features (X) and target variable (y)
-X = data[['Age', 'Hb', 'MCH', 'MCHC', 'RDW', 'RBC count']]
-y = data['Group']
+    # Initialize the constructor
+    model = Sequential()
 
-# Split the data into training and test sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    # Add an input layer 
+    model.add(Dense(32, activation='relu', input_shape=(X_train.shape[1],)))
 
-# Standardize the features to have mean=0 and variance=1
-scaler = StandardScaler().fit(X_train)
-X_train = scaler.transform(X_train)
-X_test = scaler.transform(X_test)
+    # Add one hidden layer 
+    model.add(Dense(16, activation='relu'))
 
-# Initialize the constructor
-model = Sequential()
+    # Add an output layer with one neuron and a 'softmax' activation function 
+    model.add(Dense(5, activation='softmax'))
 
-# Add an input layer
-model.add(Dense(32, activation='relu', input_shape=(X_train.shape[1],)))
+    # Compile the model
+    model.compile(loss='sparse_categorical_crossentropy',
+                optimizer='adam', 
+                metrics=['accuracy'])
 
-# Add one hidden layer
-model.add(Dense(16, activation='relu'))
+    # Train the model
+    model.fit(X_train, y_train,epochs=20, batch_size=32, verbose=1)
 
-# Add an output layer with one neuron and a 'softmax' activation function
-model.add(Dense(5, activation='softmax'))
+    return model, scaler
 
-# Compile the model
-model.compile(loss='sparse_categorical_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
+def run():
+    st.title("Thalassemia Patients disease class Prediction App")
+    st.sidebar.header('Input patient biomarkers')
 
-# Train the model
-model.fit(X_train, y_train,epochs=20, batch_size=32, verbose=1)
+    def user_input_features():
+        age = st.sidebar.slider('Age', 15, 55, 15)
+        hb = st.sidebar.slider('Hb (g/dL)', 7.0, 18.0, 7.0)
+        mch = st.sidebar.slider('MCH (pg)', 15.0, 34.0, 15.0)
+        mchc = st.sidebar.slider('MCHC (g/dL)', 25.0, 37.0, 25.0)
+        rdw = st.sidebar.slider('RDW (%)', 9.0, 27.0, 9.0)
+        rbc_count = st.sidebar.slider('RBC count (million cells/mcL)', 3.0, 8.0, 3.0)
+        data = {
+            'Age': age,
+            'Hb': hb,
+            'MCH': mch,
+            'MCHC': mchc,
+            'RDW': rdw,
+            'RBC count': rbc_count
+        }
+        return data
 
-# Get user input
-Age = st.number_input('Age', 0)
-Hb = st.number_input('Hb', 0.0)
-MCH = st.number_input('MCH', 0.0)
-MCHC = st.number_input('MCHC', 0.0)
-RDW = st.number_input('RDW', 0.0)
-RBC_count = st.number_input('RBC count', 0.0)
+    data = user_input_features()
+    data_df = pd.DataFrame(data, index=[0])
 
-# On button press
-if st.button("Classify"):
-    # Create a numpy array in the correct shape
-    user_data = np.array([[Age, Hb, MCH, MCHC, RDW, RBC_count]])
+    st.subheader('By Lakshmikanth Katabathula MSBA, University of cincinnati')
+    st.subheader('Patient biomarkers')
+    st.write(data_df)
+    
+    if st.button('Predict Group'):
+        model, scaler = train_model('https://raw.githubusercontent.com/lakshmikanth77/thalafinalapp/main/thdata_final2.csv')
+        # Scale the user data
+        user_scaled = scaler.transform(data_df)
+        # Make prediction
+        prediction = model.predict(user_scaled)
+        
+        # Output the prediction
+        predicted_group = np.argmax(prediction[0])+1
+        st.subheader(f"The predicted class is: {predicted_group}")
 
-    # Scale the user data
-    user_scaled = scaler.transform(user_data)
+        # Output class probabilities
+        prediction_df = pd.DataFrame({
+            'Group': [1, 2, 3, 4],
+            'Confidence': prediction[0][:4]
+        })
+        prediction_df.sort_values('Confidence', ascending=False, inplace=True)
+        st.subheader('Confidence in prediction for each group:')
+        st.table(prediction_df.style.format({'Confidence': '{:,.2%}'}))
 
-    # Make prediction
-    prediction = model.predict(user_scaled)
+run()
 
-    # Output the prediction
-    st.subheader(f"The predicted class is: {np.argmax(prediction)+1}")
-
-score = model.evaluate(X_test, y_test, verbose=1)
-
-print("\nTest accuracy:", score[1])
